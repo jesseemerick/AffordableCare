@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
+    <link id="bs-css" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <link id="bsdp-css" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker3.css" rel="stylesheet">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/js/bootstrap-datepicker.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js"></script>
+  <meta charset="utf-8">
+  <title>MedCalc</title>
+</head>
+<body style ="background-color: rgba(0,0,0,.2);">
+  <div class="container">
+    <div class="row">
+    <h2>Benefits Calculator</h2>
+  <div class="col-xs-12">
+<form class="form-horizontal" role="form">
+  <div class="form-group">
+     <label for="date-input" class="col-xs-4 control-label">Enter start date: </label>
+     <div class="col-xs-4">
+      <input type="text" id="date-input" class="form-control" />
+     </div>
+  </div>
+    <div class="form-group">
+     <label for="date-input" class="col-xs-4 control-label">Enter initial hourly rate of pay: </label>
+     <div class="col-xs-4">
+      <input type="text" id="rate-of-pay" class="form-control" />
+     </div>
+  </div>
+  <div class="form-group">
+       <label class="col-xs-4 control-label">Date coverage must be selected:</label>
+         <div class="col-xs-4">
+    <input type="text" class="form-control" id="coverage-selected" readonly />
+    </div>
+  </div>
+    <div class="form-group">
+    <label class="col-xs-4 control-label">Date coverage will begin:</label>
+               <div class="col-xs-4">
+    <input type="text" class="form-control" id="coverage-begin" readonly />
+  </div>
+  </div>
+  <div class="form-group">
+       <label class="col-xs-4 control-label">Monthly premium:</label>
+         <div class="col-xs-4">
+    <input type="text" class="form-control" id="monthly-premium" readonly />
+    </div>
+  </div>
+    <div class="form-group">
+    <label class="col-xs-4 control-label">Weekly paycheck deduction:</label>
+               <div class="col-xs-4">
+    <input type="text" class="form-control" id="weekly-deduction" readonly />
+  </div>
+  </div>
+  </form>
+  <button type="button" class="btn btn-primary" id="btn-clear">Reset</button>
+      </div>
+      
+      
+      
+    </div>
+  </div>
+  
+      <script>
+      $(function() {
+        
+        var updateRates = function(rate) {
+          var monthly = rate*1560/12*.095;
+          var weekly = rate*1560/52*.095;
+          $('#monthly-premium').val(monthly.toFixed(2));
+          $('#weekly-deduction').val(weekly.toFixed(2));         
+        };
+        
+        var clear = function() {
+          $('#date-input').val('');
+          $('#rate-of-pay').val('');
+          $('#coverage-selected').val('');          
+          $('#coverage-begin').val('');
+          $('#monthly-premium').val('');
+          $('#weekly-deduction').val(''); 
+        };
+        
+        $('#btn-clear').click(function() {clear();});
+        
+        $('#date-input').datepicker({
+              autoclose: true,
+              todayHighlight: true
+        }).on('changeDate', function() {
+          var curDate = $(this).val();
+          if(!curDate) return;
+          var coverageDate = Date.parse(curDate).add({ days: 60 });
+          $('#coverage-selected').val(coverageDate.toString('M/d/yyyy'));
+          var beginDate = Date.parse(curDate).add({ days: 90 });
+          $('#coverage-begin').val(beginDate.toString('M/d/yyyy'))
+        });
+        $('#rate-of-pay').on('blur', function() {
+          var rate = parseFloat($(this).val());
+          updateRates(rate);
+        }).keypress(function(event){
+	    var keycode = (event.keyCode ? event.keyCode : event.which);
+            if (keycode == '13') {
+              var rate = parseFloat($(this).val());
+              updateRates(rate);
+            }
+        });
+    });
+</script>
+</body>
+</html>
